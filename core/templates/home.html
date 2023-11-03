@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Luiz Gouveia</title>
+    <link rel="icon" href="{% static 'fav-icon.png' %}" type="image/png" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Nunito+Sans:opsz,wght@6..12,900&family=Work+Sans:wght@900&display=swap");
+
+    * {
+      padding: 0;
+      margin: 0;
+      font-family: "Montserrat";
+    }
+
+    /* Estilo global para botões */
+    button:not(.navbar-toggler):not(#fullScreenMenu a):not(#carouselPrev):not(
+        #carouselNext
+      ) {
+      background-color: rgb(255, 255, 255); /* Fundo branco */
+      color: rgb(0, 0, 0); /* Cor da letra preta */
+      transition: background-color 0.3s, color 0.3s; /* Transição suave */
+    }
+
+    button:not(.navbar-toggler):not(#fullScreenMenu a):not(#carouselPrev):not(
+        #carouselNext
+      ):hover {
+      color: rgb(
+        168,
+        194,
+        43
+      ); /* Fundo da cor especificada ao passar o mouse */
+      background-color: black; /* Cor da letra ao passar o mouse */
+    }
+
+    #dynamicNavbar {
+      opacity: 0;
+      transform: translateY(-20px);
+      transition: opacity 1s ease-out 0.1s, transform 1s ease-out 0.1s; /* 0.5s de atraso */
+    }
+
+    .page_featuredImage,
+    #buttons_group {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 1s ease-out, transform 2s ease-out;
+    }
+
+    .page_featuredContent {
+      background-image: url('{% static "background-s1.jpg" %}');
+      /* z-index: 30; */
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: 50%;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .section_three {
+      background-image: url('{% static "background-s3.jpg" %}');
+      width: 100%;
+      height: 100vh;
+      background-size: cover;
+      background-position: 50%;
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    @media screen and (min-width: 768px) {
+      .page_featuredContent,
+      .section_four {
+        background-attachment: fixed;
+      }
+    }
+
+    /* Estilo para o menu que aparece em tela inteira */
+    #fullScreenMenu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      background: #000; /* Cor preta */
+      z-index: 9999; /* Para garantir que o menu fique acima de todo o conteúdo */
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      font-family: "Nunito Sans", sans-serif;
+      font-size: 48px;
+      font-weight: 800;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s ease, visibility 0.25s ease;
+    }
+
+    #fullScreenMenu a {
+      color: #fff; /* Cor branca para os links do menu */
+      display: block;
+      text-align: center;
+      justify-content: center;
+      padding: 0px 10px;
+      align-items: center;
+      text-decoration: none;
+      transition: opacity 0.5s ease, visibility 0.5s ease; /* Ajuste a duração para 0.5s ou o valor que você preferir */
+    }
+
+    #fullScreenMenu a:hover {
+      background: #333;
+    }
+
+    #luizgouveia {
+      color: white;
+      font-family: "Work Sans", sans-serif;
+      font-size: 33px;
+      font-weight: 800;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5); /* Exemplo de drop-shadow */
+    }
+
+    .ml-auto .nav-link {
+      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+    }
+
+    .navbar-toggler-icon {
+      background-color: white; /* Cor branca para o ícone */
+      position: relative;
+      width: 24px; /* Largura padrão do ícone do menu sanduíche */
+      height: 2px; /* Altura padrão do ícone do menu sanduíche */
+      background-image: none;
+    }
+
+    .navbar-toggler-icon:before,
+    .navbar-toggler-icon:after {
+      content: "";
+      background-color: white; /* Cor branca para as barras adicionais */
+      display: block;
+      width: 24px; /* Largura padrão do ícone do menu sanduíche */
+      height: 2px; /* Altura padrão do ícone do menu sanduíche */
+      position: absolute;
+      transition: 0.3s ease;
+    }
+
+    .navbar-toggler-icon:before {
+      top: -8px; /* Posiciona a barra acima do ícone central */
+    }
+
+    .navbar-toggler-icon:after {
+      bottom: -8px; /* Posiciona a barra abaixo do ícone central */
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon {
+      background-color: transparent; /* Torna o ícone central transparente */
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon:before {
+      transform: rotate(45deg) translateY(11px); /* Gira a barra superior para formar metade do "X" */
+    }
+
+    .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon:after {
+      transform: rotate(-45deg) translateY(-11px); /* Gira a barra inferior para formar a outra metade do "X" */
+    }
+
+    .nav-link {
+      color: white;
+      font-size: 20px;
+      font-weight: 500;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .nav-link:focus,
+    .nav-link:hover {
+      color: rgb(168 194 43);
+    }
+
+    #fullScreenMenu a {
+      opacity: 0;
+      transform: translateY(100px);
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .slide-in-bottom {
+      -webkit-animation: slide-in-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+      animation: slide-in-bottom 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
+    }
+
+    @keyframes slide-in-bottom {
+      0% {
+        transform: translateY(100px);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .social-icons-row {
+      position: absolute;
+      bottom: 20%; /* Ajuste este valor conforme necessário para posicionar a linha onde você deseja */
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 20px; /* Espaço entre os ícones */
+    }
+
+    .social-icon {
+      color: #fff;
+      font-size: 24px; /* Ajuste o tamanho dos ícones conforme necessário */
+      transition: color 0.3s;
+    }
+
+    .social-icon:hover {
+      color: #333; /* Cor ao passar o mouse sobre o ícone */
+    }
+
+    .section_one {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 1050px;
+      margin: 0 auto;
+      text-align: center;
+      position: relative;
+    }
+
+    .section_two {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
+      justify-content: center;
+      align-items: center;
+      align-content: center;
+    }
+
+    .youtube-video-container {
+      position: relative;
+      width: 560px;
+      height: 320px;
+      z-index: 1;
+    }
+
+    .youtube-video-container iframe {
+      width: 100%;
+      height: 100%;
+    }
+
+    .background-video {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      min-width: 100%;
+      min-height: 100%;
+      width: auto;
+      height: auto;
+      z-index: -1;
+      transform: translate(-50%, -50%);
+    }
+
+    .section_three img {
+      max-width: 600px; /* Ajuste este valor conforme necessário */
+      width: 100%;
+      height: auto;
+    }
+
+    .section_three {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column; /* Se você tiver outros elementos na section_three e quiser que eles sejam empilhados verticalmente */
+      height: 100vh;
+      color: white;
+      background-color: black;
+    }
+
+    .carousel-inner {
+      padding-bottom: 40px; /* Espaço para os indicadores. Ajuste conforme necessário */
+    }
+
+    .carousel-indicators {
+      position: absolute;
+      right: 0;
+      bottom: 0; /* Ajuste para posicionar os indicadores acima do fundo. Ajuste conforme necessário */
+      left: 0;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      padding: 0;
+      margin-right: 15%;
+      margin-left: 15%;
+    }
+
+    .product:hover .productImage {
+      transform: translateY(-5px);
+    }
+
+    .productImage {
+      margin-bottom: 20px;
+    }
+
+    .productContainer {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .product {
+      flex: 0 0 calc(33.33% - 16px); /* 33.33% para 3 produtos por linha e -16px para considerar as margens */
+      margin: 8px; /* metade de 16px para garantir o espaçamento entre os produtos */
+    }
+
+    .section_four {
+      background-image: url('{% static "background-s4.jpg" %}');
+      width: 100%;
+      background-color: rgb(25 30 17);
+      background-size: cover;
+      background-position: bottom;
+      display: flex;
+      align-items: center;
+      position: relative;
+      padding: 5vh 0;
+    }
+
+    .section_pix {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 10px;
+      border-radius: 5px;
+      max-width: 60%;
+      margin: auto;
+    }
+
+    @media screen and (max-width: 375px) {
+      .page_featuredContent {
+        padding-top: 5vh;
+      }
+
+      .section_one {
+        padding-bottom: 5vh;
+      }
+
+      .section_three {
+        height: 110vh;
+      }
+    }
+
+    @media screen and (max-width: 750px) {
+      .youtube-video-container {
+        position: relative;
+        width: 280px;
+        height: 160px;
+        z-index: 1;
+      }
+
+      #apoie_ft {
+        text-align: justify;
+      }
+    }
+
+    @media screen and (max-width: 991px) {
+      #section_one_responsive {
+        flex-direction: column;
+      }
+
+      .page_featuredImage {
+        margin-bottom: 0;
+        width: 100%;
+      }
+    }
+
+    @media screen and (min-width: 992px) {
+      #section_one_responsive {
+        display: flex;
+        width: 100%;
+        flex-direction: row;
+      }
+
+      #buttons_group {
+        margin-left: 15vh;
+      }
+
+      .section_pix {
+        max-width: 40%;
+      }
+    }
+    .page_featuredImage {
+      max-width: 550px;
+      width: 70%;
+      filter: drop-shadow(15px 15px 15px rgba(0, 0, 0, 0.25));
+      margin-bottom: 20px;
+    }
+
+    .toast-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5); /* Fundo semi-transparente */
+      z-index: 9998; /* Garante que o fundo fique abaixo do toast */
+      display: none; /* Inicialmente oculto */
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 9999; /* Garante que o toast fique acima do fundo */
+    }
+
+    .toast-body {
+      background-color: green;
+    }
+  </style>
+  <body>
+    <nav
+      class="navbar navbar-expand-lg fixed-top d-flex justify-content-between"
+      id="dynamicNavbar"
+      style="z-index: 10000; padding: 10px 15px"
+    >
+      <a class="navbar-brand ms-2 ms-lg-4" id="luizgouveia" href="#"
+        >LUIZ GOUVEIA</a
+      >
+      <div class="ml-auto d-none d-lg-flex">
+        <ul class="navbar-nav">
+          <!-- <li class="nav-item mx-3 me-5">
+            <a class="nav-link" href="#">sobre</a>
+          </li> -->
+          <li class="nav-item mx-5">
+            <a class="nav-link" href="#">escute</a>
+          </li>
+          <li class="nav-item mx-5">
+            <a class="nav-link" href="#merch">merch</a>
+          </li>
+          <li class="nav-item mx-5">
+            <a class="nav-link" href="#apoie">apoie</a>
+          </li>
+          <li class="nav-item mx-5">
+            <a class="nav-link" href="#">contato</a>
+          </li>
+        </ul>
+      </div>
+      <button
+        class="navbar-toggler navbar-toggler-right"
+        type="button"
+        style="border: none"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+    </nav>
+
+    <!-- Menu em tela inteira -->
+    <div id="fullScreenMenu">
+      <div style="margin-bottom: 10vh">
+        <!-- <a href="#">SOBRE</a> -->
+        <a href="#">ESCUTE</a>
+        <a href="#merch">MERCH</a>
+        <a href="#apoie">APOIE</a>
+        <a href="#">CONTATO</a>
+      </div>
+
+      <div class="social-icons-row">
+        <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a>
+        <a href="#" class="social-icon"><i class="fab fa-facebook"></i></a>
+      </div>
+    </div>
+
+    <!-- Conteúdo da página (para simular rolagem) -->
+    <div class="page_featuredContent">
+      <div class="container text-center section_one" style="color: white">
+        <div class="align-items-center" id="section_one_responsive">
+          <img
+            src="{% static 'perfil-site.jpg' %}"
+            alt="Perfil"
+            class="page_featuredImage"
+          />
+          <div id="buttons_group" class="col d-flex flex-column">
+            <h2 class="fw-bold mb-2" style="letter-spacing: 6px">
+              VIDEIRA<br />VERDADEIRA
+            </h2>
+            <h5 class="mb-4">Novo single, confira!</h5>
+            <button
+              type="button"
+              class="btn btn-light mb-2 py-2 rounded-0 fw-medium"
+            >
+              ESCUTAR
+            </button>
+            <button
+              type="button"
+              class="btn btn-light mb-2 py-2 rounded-0 fw-medium"
+            >
+              ASSISTIR
+            </button>
+            <button
+              type="button"
+              class="btn btn-light mb-2 py-2 rounded-0 fw-medium"
+            >
+              CIFRAS
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="section_two">
+      <div class="youtube-video-container">
+        <iframe
+          width="560"
+          height="315"
+          src="https://www.youtube.com/embed/SlEEgMWwxhc"
+          title="YouTube video player"
+          frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen
+        ></iframe>
+      </div>
+      <video class="background-video" autoplay loop muted>
+        <source src="{% static 'background-video.mp4' %}" type="video/mp4" />
+        Seu navegador não suporta a tag de vídeo.
+      </video>
+      <!-- Outro conteúdo da section_two aqui, se necessário -->
+    </div>
+
+    <div class="section_three" id="merch">
+      <h2 class="fw-semibold" style="padding-bottom: 25px">MERCH</h2>
+
+      <div
+        class="productContainer d-none d-md-flex flex-wrap justify-content-center"
+      >
+        <!-- Produto 1 -->
+        <div class="product text-center m-2">
+          <img
+            src="{% static 'tshirt-vv-preta.png' %}"
+            class="productImage"
+            alt="Videira Verdadeira Black"
+          />
+          <h5>Videira Verdadeira Black</h5>
+          <p>R$ 69.90</p>
+        </div>
+        <!-- Produto 2 -->
+        <div class="product text-center m-2">
+          <img
+            src="{% static 'tshirt-vv-branca.png' %}"
+            class="productImage"
+            alt="Videira Verdadeira White"
+          />
+          <h5>Videira Verdadeira White</h5>
+          <p>R$ 69.90</p>
+        </div>
+        <!-- Adicione mais produtos conforme necessário -->
+      </div>
+
+      <div
+        id="productCarousel"
+        class="carousel slide d-md-none"
+        data-bs-ride="carousel"
+      >
+        <div class="carousel-indicators">
+          <button
+            type="button"
+            data-bs-target="#productCarousel"
+            data-bs-slide-to="0"
+            class="active"
+            aria-current="true"
+            aria-label="Slide 1"
+          ></button>
+          <button
+            type="button"
+            data-bs-target="#productCarousel"
+            data-bs-slide-to="1"
+            aria-label="Slide 2"
+          ></button>
+          <!-- Adicione mais botões conforme o número de slides que você tem -->
+        </div>
+        <!-- Conteúdo do Carrossel -->
+        <div class="carousel-inner">
+          <!-- Produto 1 -->
+          <div class="carousel-item active">
+            <img
+              src="{% static 'tshirt-vv-preta.png' %}"
+              class="d-block w-100 productImage"
+              alt="Videira Verdadeira Black"
+            />
+            <div class="text-center">
+              <h5>Videira Verdadeira Black</h5>
+            </div>
+          </div>
+          <!-- Produto 2 -->
+          <div class="carousel-item">
+            <img
+              src="{% static 'tshirt-vv-branca.png' %}"
+              class="d-block w-100 productImage"
+              alt="Videira Verdadeira White"
+            />
+            <div class="text-center">
+              <h5>Videira Verdadeira White</h5>
+            </div>
+          </div>
+          <!-- Adicione mais produtos conforme necessário -->
+        </div>
+        <!-- Controles do Carrossel -->
+        <button
+          id="carouselPrev"
+          class="carousel-control-prev"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button
+          id="carouselNext"
+          class="carousel-control-next"
+          type="button"
+          data-bs-target="#productCarousel"
+          data-bs-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+      <div>
+        <button
+          type="button"
+          class="btn btn-lg btn-light mb-2 py-2 rounded-0 fw-medium"
+        >
+          GOU ART STORE
+        </button>
+      </div>
+    </div>
+    <div class="section_four" id="apoie">
+      <div
+        class="container text-center"
+        style="color: white; padding-top: 5vh; padding-bottom: 5vh"
+      >
+        <div class="row d-flex px-3" id="apoie_ft">
+          <h2 class="fw-semibold mb-4 text-center">SEJA UM APOIADOR!</h2>
+          <p class="mb-4 px-3">
+            Se você gosta das minhas músicas e gostaria de contribuir para que
+            esse trabalho continue a ser produzido, receber seu apoio é
+            fundamental!
+          </p>
+          <p class="mb-4 px-3">
+            Sou um artista independente, toda ajuda é bem-vinda e será usada
+            para glorificar a Deus através de mais canções.
+          </p>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <h4 class="mb-3">PIX - CPF</h4>
+            <p
+              class="mb-5"
+              style="
+                font-size: 24px;
+                background-color: rgba(0, 0, 0, 0.5);
+                padding: 10px;
+                border-radius: 5px;
+              "
+            >
+              389.775.878-40
+            </p>
+            <h4 class="mb-3">PIX - COPIA E COLA</h4>
+            <button
+              class="btn btn-lg btn-light mb-2 py-2 rounded-0 fw-medium mb-5"
+              onclick="copyPixCode()"
+            >
+              COPIAR
+            </button>
+          </div>
+          <div
+            aria-live="polite"
+            aria-atomic="true"
+            class="position-fixed top-50 start-50 translate-middle"
+            style="z-index: 10001"
+          >
+            <div class="toast-container">
+              <div class="toast" id="copyToast">
+                <div class="toast-header">
+                  <strong class="me-auto">Notificação</strong>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast"
+                    aria-label="Close"
+                  ></button>
+                </div>
+                <div class="toast-body">Código PIX copiado com sucesso!</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h4 class="mb-3">PIX - QR CODE</h4>
+            <div class="section_pix">
+              <img
+                src="{% static 'qrcode-pix.png' %}"
+                alt="QR Code"
+                style="max-width: 100%; height: auto"
+              />
+            </div>
+          </div>
+        </div>
+        <div class="mt-5">
+          <p>Muito grato e que Deus abençoe grandemente sua vida!</p>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let image = document.querySelector(".page_featuredImage");
+        let buttons = document.querySelector("#buttons_group");
+        let navbar = document.querySelector("#dynamicNavbar");
+
+        image.style.opacity = "1";
+        image.style.transform = "translateY(0)";
+
+        buttons.style.opacity = "1";
+        buttons.style.transform = "translateY(0)";
+
+        setTimeout(function () {
+          navbar.style.opacity = "1";
+          navbar.style.transform = "translateY(0)";
+        }, 300); // 500ms de atraso
+      });
+
+      // Código JavaScript para alterar o background da navbar ao rolar
+      $(window).scroll(function () {
+        var scroll = $(window).scrollTop();
+        if (scroll > 50) {
+          $("#dynamicNavbar").css("background", "transparent");
+        } else {
+          $("#dynamicNavbar").css("background", "transparent");
+        }
+      });
+
+      // Código para mostrar/ocultar o menu em tela inteira
+      $(".navbar-toggler").on("click", function () {
+        if ($("#fullScreenMenu").css("visibility") === "hidden") {
+          $("#fullScreenMenu").css({
+            opacity: "1",
+            visibility: "visible",
+          });
+          $(this).attr("aria-expanded", "true"); // Define o atributo para "true"
+
+          // Adiciona a classe de animação a cada link
+          $("#fullScreenMenu a").each(function (index) {
+            var that = $(this);
+            setTimeout(function () {
+              that.addClass("slide-in-bottom");
+            }, index * 100); // Adiciona um delay para cada link, criando um efeito em cascata
+          });
+        } else {
+          $("#fullScreenMenu").css({
+            opacity: "0",
+            visibility: "hidden",
+          });
+          $(this).attr("aria-expanded", "false"); // Define o atributo para "false"
+
+          // Remove a classe de animação
+          $("#fullScreenMenu a").removeClass("slide-in-bottom");
+        }
+
+        $(document).ready(function () {
+          // Evento de clique para os links dentro do #fullScreenMenu
+          $("#fullScreenMenu a").on("click", function () {
+            // Defina a opacidade para 0
+            $("#fullScreenMenu").css("opacity", "0");
+
+            // Após a duração da transição, defina a visibilidade para hidden
+            setTimeout(function () {
+              $("#fullScreenMenu").css("visibility", "hidden");
+            }, 500); // 500ms é a duração da transição. Ajuste este valor se você mudar a duração no CSS.
+
+            $(".navbar-toggler").attr("aria-expanded", "false"); // Define o atributo para "false"
+            // Remove a classe de animação
+            $("#fullScreenMenu a").removeClass("slide-in-bottom");
+          });
+        });
+      });
+
+      function copyPixCode() {
+        // Código PIX
+        var pixCode =
+          "00020126360014BR.GOV.BCB.PIX0114+55139819429565204000053039865802BR5912Luiz Gouveia6006Santos62160512APOIOWEBSITE6304176B";
+
+        // Cria um elemento textarea temporário
+        var tempElement = document.createElement("textarea");
+        // Define o valor do textarea para o código PIX
+        tempElement.value = pixCode;
+        // Adiciona o textarea ao corpo do documento
+        document.body.appendChild(tempElement);
+        // Seleciona o conteúdo do textarea
+        tempElement.select();
+        // Copia o texto selecionado
+        document.execCommand("copy");
+        // Remove o textarea do corpo do documento
+        document.body.removeChild(tempElement);
+
+        // Exibe o Toast
+        var toastEl = new bootstrap.Toast(
+          document.getElementById("copyToast"),
+          {
+            autohide: true,
+            delay: 2000,
+          }
+        );
+        toastEl.show();
+
+        // Mostra o fundo escuro
+        var backdrop = document.createElement("div");
+        backdrop.classList.add("toast-backdrop");
+        document.body.appendChild(backdrop);
+        backdrop.style.display = "block";
+
+        // Oculta o fundo escuro quando o toast é ocultado
+        toastEl._element.addEventListener("hidden.bs.toast", function () {
+          document.body.removeChild(backdrop);
+        });
+      }
+    </script>
+  </body>
+</html>
