@@ -4,6 +4,6 @@ __pycache__
 *.log
 *.sqlite3
 *.env
-.venv/
+venv/
 db.sqlite3
 *.migrations
